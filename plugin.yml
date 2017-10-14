@@ -1,0 +1,11 @@
+name: BountyHunter
+main: RTG\BountyHunter\Loader
+api: 3.0.0-ALPHA8
+version: 1.0.0
+author: IG
+commands:
+  bh:
+    permissions: bounty.command
+permissions:
+  bounty.command:
+    default: true

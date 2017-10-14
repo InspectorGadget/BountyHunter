@@ -8,9 +8,9 @@
 
 namespace RTG\BountyHunter;
 
+use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\PluginBase;
-use RTG\BountyHunter\Commands\BountyCommand;
 
 class Loader extends PluginBase {
 
@@ -20,33 +20,24 @@ class Loader extends PluginBase {
 
     public function onEnable() {
 
-        // Config Check
-        if ($this->checkConfig() === true) {
-
-            if (!is_file($this->getDataFolder() . $this->db_file)) {
-                $this->db = new \SQLite3($this->getDataFolder() . $this->db_file);
-                $this->db->exec("CREATE TABLE IF NOT EXISTS `list` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `bounty` INTEGER NOT NULL);");
-            } else {
-                $this->getLogger()->warning(self::prefix . " Database has been loaded under the name of $this->db_file");
-            }
-
-            $this->onRegisterCommands();
-
-        } else {
-            $this->setEnabled(false);
+        if (!is_dir($this->getDataFolder())) {
+            mkdir($this->getDataFolder());
         }
 
-    }
+        if (!is_file($this->getDataFolder() . $this->db_file)) {
+            $this->db = new \SQLite3($this->getDataFolder() . $this->db_file);
+            $this->db->exec("CREATE TABLE IF NOT EXISTS `list` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `bounty` INTEGER NOT NULL);");
+        } else {
+            $this->getLogger()->warning(self::prefix . " Database has been loaded under the name of $this->db_file");
+        }
 
-    public function onRegisterCommands() {
-        $this->getCommand()->register("bh", new BountyCommand($this));
     }
 
     /**
      * @return bool
      */
     public function checkConfig(): bool {
-        $json = json_decode(file_get_contents("config.json"));
+        $json = json_decode(file_get_contents($this->getDataFolder() . "config.json"));
         if ($json['enabled'] === true) {
             return true;
         } else {
@@ -148,9 +139,36 @@ class Loader extends PluginBase {
     public function getAll(CommandSender $sender) {
         $statement = "SELECT * FROM `list`";
         $res = $this->getDatabase()->query($statement);
+        $sender->sendMessage("Total affected Players: ");
         while ($row = $res->fetchArray(1)) {
             $sender->sendMessage($row['name']);
         }
+    }
+
+    // ----------------- COMMANDS -------------------
+
+    public function onCommand(CommandSender $sender, Command $command, string $commandLabel, array $args): bool {
+
+        if ($sender->hasPermission("bounty.command")) {
+            switch ($command->getName()) {
+                case "bh":
+                    if (isset($args[0])) {
+                        switch ($args[0]) {
+                            case "list":
+                                $this->getAll($sender);
+                                return true;
+                            break;
+                        }
+                    } else {
+                        $sender->sendMessage("[Usage] /bh list");
+                    }
+                    return true;
+                break;
+            }
+        } else {
+            $sender->sendMessage("No Perm!");
+        }
+
     }
 
 }
