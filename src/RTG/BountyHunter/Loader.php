@@ -18,19 +18,35 @@ class Loader extends PluginBase {
 
     public function onEnable() {
 
-        if (!is_file($this->getDataFolder() . $this->db_file)) {
-            $this->db = new \SQLite3($this->getDataFolder() . $this->db_file);
-            $this->db->exec("CREATE TABLE IF NOT EXISTS `list` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `bounty` INTEGER NOT NULL);");
-        } else {
-            $this->getLogger()->warning(self::prefix . " Database has been loaded under the name of $this->db_file");
-        }
+        // Config Check
+        if ($this->checkConfig() === true) {
 
-        $this->onRegisterCommands();
+            if (!is_file($this->getDataFolder() . $this->db_file)) {
+                $this->db = new \SQLite3($this->getDataFolder() . $this->db_file);
+                $this->db->exec("CREATE TABLE IF NOT EXISTS `list` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `bounty` INTEGER NOT NULL);");
+            } else {
+                $this->getLogger()->warning(self::prefix . " Database has been loaded under the name of $this->db_file");
+            }
+
+            $this->onRegisterCommands();
+
+        } else {
+            $this->setEnabled(false);
+        }
 
     }
 
     public function onRegisterCommands() {
 
+    }
+
+    public function checkConfig(): bool {
+        $json = json_decode(file_get_contents("config.json"));
+        if ($json['enabled'] === true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
