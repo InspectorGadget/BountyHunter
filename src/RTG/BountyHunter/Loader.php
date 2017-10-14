@@ -89,12 +89,16 @@ class Loader extends PluginBase {
      * @return bool
      */
     public function setBounty($name, int $integer): bool {
-        $statement = "SELECT * FROM `list` WHERE `name` = '$name'";
-        $res = $this->getDatabase()->query($statement);
-        if ($row = $res->fetchArray(1)) {
-            return false;
+        if (!$this->hasBounty($name)) {
+            $statement = "SELECT * FROM `list` WHERE `name` = '$name'";
+            $res = $this->getDatabase()->query($statement);
+            if ($row = $res->fetchArray(1)) {
+                return false;
+            } else {
+                return true;
+            }
         } else {
-            return true;
+            return false;
         }
     }
 
@@ -152,10 +156,30 @@ class Loader extends PluginBase {
         if ($sender->hasPermission("bounty.command")) {
             switch ($command->getName()) {
                 case "bh":
+
                     if (isset($args[0])) {
                         switch ($args[0]) {
                             case "list":
                                 $this->getAll($sender);
+                                return true;
+                            break;
+                            case "set":
+                                if (isset($args[1])) {
+                                    if (isset($args[2])) {
+                                        if ($args[1] instanceof Player) {
+                                            if (empty($args[2])) {
+                                                $int = 100;
+                                            } else {
+                                                if (is_int($args[2])) {
+                                                    $int = $args[2];
+                                                }
+                                            }
+                                            $this->setBounty($args[1], $int);
+                                        } else {
+                                            $sender->sendMessage("$args[1] is not a valid Player!");
+                                        }
+                                    }
+                                }
                                 return true;
                             break;
                         }
@@ -168,7 +192,5 @@ class Loader extends PluginBase {
         } else {
             $sender->sendMessage("No Perm!");
         }
-
     }
-
 }
