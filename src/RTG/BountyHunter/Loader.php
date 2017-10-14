@@ -8,7 +8,9 @@
 
 namespace RTG\BountyHunter;
 
+use pocketmine\command\CommandSender;
 use pocketmine\plugin\PluginBase;
+use RTG\BountyHunter\Commands\BountyCommand;
 
 class Loader extends PluginBase {
 
@@ -37,7 +39,7 @@ class Loader extends PluginBase {
     }
 
     public function onRegisterCommands() {
-
+        $this->getCommand()->register("bh", new BountyCommand($this));
     }
 
     /**
@@ -141,8 +143,14 @@ class Loader extends PluginBase {
                 return false;
             }
         }
+    }
 
-
+    public function getAll(CommandSender $sender) {
+        $statement = "SELECT * FROM `list`";
+        $res = $this->getDatabase()->query($statement);
+        while ($row = $res->fetchArray(1)) {
+            $sender->sendMessage($row['name']);
+        }
     }
 
 }
