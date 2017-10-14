@@ -40,6 +40,9 @@ class Loader extends PluginBase {
 
     }
 
+    /**
+     * @return bool
+     */
     public function checkConfig(): bool {
         $json = json_decode(file_get_contents("config.json"));
         if ($json['enabled'] === true) {
