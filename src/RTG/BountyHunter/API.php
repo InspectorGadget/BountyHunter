@@ -71,7 +71,7 @@ class API {
      * @param int $integer
      * @return bool
      */
-    public function setBounty($name, int $integer): bool {
+    public function newBounty($name, int $integer): bool {
         if (!$this->hasBounty($name)) {
             $statement = "INSERT INTO `list` (name, bounty) VALUES ('$name', '$integer')";
             $res = $this->getDatabase()->query($statement);
@@ -133,6 +133,13 @@ class API {
         while ($row = $res->fetchArray(1)) {
             $sender->sendMessage($row['name']);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string {
+        return "API";
     }
 
 }

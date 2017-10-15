@@ -28,6 +28,7 @@ class Loader extends PluginBase {
             $this->db->exec("CREATE TABLE IF NOT EXISTS `list` (`id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `bounty` INTEGER NOT NULL);");
         } else {
             $this->getLogger()->warning(self::prefix . " Database has been loaded under the name of $this->db_file");
+            $this->getLogger()->warning(self::prefix . " " . $this->getAPI()->getName() . " has been loaded!");
         }
 
     }
@@ -64,7 +65,7 @@ class Loader extends PluginBase {
                                                     $int = 100;
                                                 }
                                             }
-                                            $this->getAPI()->setBounty($args[1], $int);
+                                            $this->getAPI()->newBounty($args[1], $int);
                                         } else {
                                             $sender->sendMessage("$args[1] is not a valid Player!");
                                         }
