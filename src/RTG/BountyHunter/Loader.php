@@ -43,11 +43,14 @@ class Loader extends PluginBase {
                 case "bh":
 
                     if (isset($args[0])) {
+
                         switch ($args[0]) {
+
                             case "list":
                                 $this->getAPI()->getAll($sender);
                                 return true;
                             break;
+
                             case "set":
                                 if (isset($args[1])) {
                                     if (isset($args[2])) {
@@ -71,6 +74,7 @@ class Loader extends PluginBase {
                                 }
                                 return true;
                             break;
+
                             case "inbounty":
                                 if (isset($args[1]) && isset($args[2])) {
                                     if ($args[1] instanceof Player) {
@@ -94,6 +98,7 @@ class Loader extends PluginBase {
                                 return true;
                             break;
                         }
+
                     } else {
                         $cmd = array(
                             "/bh list",
@@ -103,12 +108,16 @@ class Loader extends PluginBase {
                         foreach ($cmd as $c) {
                             $sender->sendMessage($c);
                         }
+
                     }
+
                     return true;
                 break;
             }
+
         } else {
             $sender->sendMessage("No Perm!");
         }
+
     }
 }
