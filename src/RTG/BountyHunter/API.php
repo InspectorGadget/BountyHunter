@@ -123,6 +123,9 @@ class API {
         }
     }
 
+    /**
+     * @param CommandSender $sender
+     */
     public function getAll(CommandSender $sender) {
         $statement = "SELECT * FROM `list`";
         $res = $this->getDatabase()->query($statement);
