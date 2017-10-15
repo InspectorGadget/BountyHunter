@@ -172,6 +172,8 @@ class Loader extends PluginBase {
                                             } else {
                                                 if (is_int($args[2])) {
                                                     $int = $args[2];
+                                                } else {
+                                                    $int = 100;
                                                 }
                                             }
                                             $this->setBounty($args[1], $int);
@@ -179,12 +181,43 @@ class Loader extends PluginBase {
                                             $sender->sendMessage("$args[1] is not a valid Player!");
                                         }
                                     }
+                                } else {
+                                    $sender->sendMessage("[Usage] /bh set {name} {bounty}");
+                                }
+                                return true;
+                            break;
+                            case "inbounty":
+                                if (isset($args[1]) && isset($args[2])) {
+                                    if ($args[1] instanceof Player) {
+                                        if (empty($args[2])) {
+                                            $sender->sendMessage("[Usage] /bh addbounty {name} {bounty:int}");
+                                            return true;
+                                        } else {
+                                            if (is_int($args[2])) {
+                                                $this->increaseBounty($args[1], $args[2]);
+                                                $sender->sendMessage("Done");
+                                            } else {
+                                                $sender->sendMessage("Bounty has to be in a form of Integer!");
+                                            }
+                                        }
+                                    } else {
+                                        $sender->sendMessage("$args[1] is not a Player!");
+                                    }
+                                } else {
+                                    $sender->sendMessage("[Usage] /bh inbounty {name} {bounty:int}");
                                 }
                                 return true;
                             break;
                         }
                     } else {
-                        $sender->sendMessage("[Usage] /bh list");
+                        $cmd = array(
+                            "/bh list",
+                            "/bh setbounty",
+                            "/bh inbounty"
+                        );
+                        foreach ($cmd as $c) {
+                            $sender->sendMessage($c);
+                        }
                     }
                     return true;
                 break;
